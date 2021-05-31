@@ -4,8 +4,12 @@ from starlette.responses import JSONResponse
 
 router = APIRouter()
 
+
 @router.post('/classify_iris')
 def extract_name(iris: IrisSpecies):
+    '''
+    Iris Classifier
+    '''
     iris_features = iris.dict()
     iris_classifier = IrisClassifier()
     return JSONResponse(iris_classifier.classify_iris(iris_features))

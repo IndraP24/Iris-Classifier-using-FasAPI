@@ -5,6 +5,13 @@ import uvicorn
 app = FastAPI()
 app.include_router(iris_router.router, prefix='/iris')
 
+@app.get('/')
+def index():
+    '''
+    This is the index page!
+    '''
+    return {'Instructions': 'Type [/docs] after the localhost address for Swagger UI'}
+
 
 @app.get('/healthcheck', status_code=200)
 async def healthcheck():
