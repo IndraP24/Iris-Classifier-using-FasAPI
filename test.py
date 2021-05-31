@@ -7,5 +7,5 @@ new_measurement = {
     'petal_width': 2.2
 }
 
-response = requests.post('http://127.0.0.1:8000/predict', json=new_measurement)
+response = requests.post('http://127.0.0.1:8000/iris/classify_iris', json=new_measurement)
 print(response.content)
