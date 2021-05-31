@@ -8,6 +8,9 @@ app = FastAPI()
 # 3. Index route to open on localhost automatically
 @app.get('/')
 def index():
+    '''
+    This is an initial docstring. It is the default page that loads.
+    '''
     return {'message': 'Hello, Stranger'}
 
 
@@ -15,6 +18,9 @@ def index():
 
 @app.get('/{name}')
 def get_name(name: str):
+    '''
+    This is the second docstring. It loads when a parameter is provided.
+    '''
     return {'message': f'Hello, {name}'}
 
 
