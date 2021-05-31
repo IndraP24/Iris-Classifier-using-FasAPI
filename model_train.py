@@ -1,43 +1,40 @@
-import pandas as pd
-from pandas.core.algorithms import mode
-from sklearn.ensemble import RandomForestClassifier
+import numpy as np
 from sklearn.datasets import load_iris
-from pydantic import BaseModel
+from sklearn.linear_model import LogisticRegression
 import joblib
-
+from pydantic import BaseModel
 
 class IrisSpecies(BaseModel):
-    sepal_length: float
-    sepal_width: float
+    sepal_length: float 
+    sepal_width: float 
     petal_length: float 
     petal_width: float
 
 
-class IrisModel:
+class IrisClassifier:
     def __init__(self):
-        self.iris = load_iris()
-        self.X = self.iris.data
-        self.y = self.iris.target
-
+        self.X, self.y = load_iris(return_X_y=True)
+        self.iris_type = {
+            0: 'setosa',
+            1: 'versicolor',
+            2: 'virginica'
+        }
         self.model_fname_ = "iris_model.pkl"
 
         try:
             self.model = joblib.load(self.model_fname_)
         except Exception as _:
-            self.model = self._train_model()
+            self.model = self.train_model()
             joblib.dump(self.model, self.model_fname_)
+        
 
+    def train_model(self) -> LogisticRegression:
+        return LogisticRegression(solver='lbfgs',
+                                  max_iter=1000,
+                                  multi_class='multinomial').fit(self.X, self.y)
 
-    def _train_model(self):
-        X = self.X
-        y = self.y
-        rf = RandomForestClassifier()
-        model = rf.fit(X, y)
-        return model
-
-
-    def predict_species(self, epal_length, sepal_width, petal_length, petal_width):
-        data_in = [[epal_length, sepal_width, petal_length, petal_width]]
-        prediction = self.model.predict(data_in)
-        probability = self.model.predict_proba(data_in).max()
-        return prediction[0], probability
+    def classify_iris(self, features: dict):
+        X = [features['sepal_length'], features['sepal_width'], features['petal_length'], features['petal_width']]
+        prediction = self.model.predict_proba([X])
+        return {'class': self.iris_type[np.argmax(prediction)],
+                'probability': round(max(prediction[0]), 2)}
